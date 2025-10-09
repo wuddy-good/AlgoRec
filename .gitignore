@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 venv/
 .env
 __pycache__/
@@ -5,3 +6,57 @@ __pycache__/
 *.pyo
 .idea/
 .vscode/
+=======
+# macOS
+.DS_Store
+
+# Environment
+.env
+.env.*
+
+# Logs and DB
+*.log
+*.sqlite3
+
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.pyd
+*.pyo
+*.egg
+*.egg-info/
+dist/
+build/
+.cache/
+coverage/
+*.cover
+*.pytest_cache/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Node/Frontend (якщо буде)
+node_modules/
+frontend/.next/
+frontend/.nuxt/
+frontend/dist/
+frontend/out/
+frontend/.cache/
+frontend/.vite/
+frontend/.turbo/
+frontend/coverage/
+frontend/.eslintcache
+
+# Backend virtual environment
+backend/venv/
+backend/.mypy_cache/
+backend/.pytest_cache/
+backend/.coverage
+backend/coverage.xml
+backend/htmlcov/
+backend/.ruff_cache/
+>>>>>>> 50aec7dfac1db8532151385b399d1eebd186fe7e
