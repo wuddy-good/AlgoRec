@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from jose import JWTError, jwt
+from jose import jwt, JWTError
 
 # Creating a JWT token
 SECRET_KEY = "секрет_строка_для_подписи" 
