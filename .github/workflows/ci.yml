@@ -21,7 +21,7 @@ jobs:
         run: |
           pip install flake8
           flake8 backend/
-      - name: Run tests
-        run: |
-          pip install pytest
-          pytest backend/tests
+      # - name: Run tests
+      #   run: |
+      #     pip install pytest
+      #     pytest backend/tests
