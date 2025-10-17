@@ -1,42 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Кастомні CSS змінні */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --color-button-primary: #E16A17;  /* важливий колір для кнопок */
+  --color-button-secondary: #026E89; /* важливий колір для кнопок */
+  --color-accent-orange: #E16A17;   /* акцентний колір */
+  --color-accent-blue: #026E89;     /* акцентний колір */
+  --color-text-primary: #111827;    /* основний колір для тексту */
+  --color-bg-blue-light: #CDF4FE;  /* світло-блакитний для блоків */
+  --color-rating-star: #F9DF16;     /* жовтий для рейтингу */
+  --color-gray-medium: #767676;     /* середній сірий */
+  --color-gray-light: #949494;      /* світлий сірий */
+  --color-gray-very-light: #F4F4F4; /* дуже світлий сірий */
+  --color-white-pure: #FFFFFF;      /* класичний білий */
+  
+  /* Border radius для кнопок та імпутів */
+  --button-radius: 0.5rem;          /* 8px - стандартне скруглення для кнопок */
+  --input-radius-pill: 9999px;      /* повне скруглення для імпутів */
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Кастомні класи для кнопок */
+.btn-primary {
+  @apply bg-brand-orange text-white-pure px-4 py-2 font-medium transition-colors;
+  border-radius: var(--button-radius);
 }
 
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
+.btn-primary:hover {
+  @apply bg-accent-orange-dark;
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+.btn-secondary {
+  @apply text-text-primary hover:text-brand-blue px-3 py-2 font-medium transition-colors;
 }
 
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+/* Кастомні класи для імпутів */
+.input-pill {
+  border-radius: var(--input-radius-pill);
 }
