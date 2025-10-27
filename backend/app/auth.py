@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta, timezone
 from jose import jwt  # JWTError можна додати, якщо треба для обробки помилок
 
-# Налаштування
-SECRET_KEY = "секрет_строка_для_подписи"
+# налаштування JWT
+SECRET_KEY = "5ffded193d5ee5c8913c03abd335ee7e"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
