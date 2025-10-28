@@ -17,12 +17,12 @@ export default function Footer() {
           </div>
 
           {/* Navigation Links */}
-          <div className="grid grid-cols-2 md:grid-cols-4 w-full lg:w-auto" style={{ gap: '62px' }}>
+          <div className="grid grid-cols-2 md:grid-cols-4 w-full lg:w-auto" style={{ gap: '134px' }}>
             {/* About */}
             <div>
-              <h4 className="text-base font-bold mb-4 text-text-primary" style={{ fontFamily: 'Open Sans, sans-serif' }}>About</h4>
+                      <h4 className="text-base font-bold mb-4 text-text-primary font-sans">About</h4>
               <ul className="space-y-2">
-                <li><a href="#" className="text-text-primary-light hover:text-brand-blue transition-colors text-sm font-normal" style={{ fontFamily: 'Open Sans, sans-serif' }}>About Us</a></li>
+                        <li><a href="#" className="text-text-primary-light hover:text-brand-blue transition-colors text-sm font-normal font-sans">About Us</a></li>
                 <li><a href="#" className="text-text-primary-light hover:text-brand-blue transition-colors text-sm font-normal" style={{ fontFamily: 'Open Sans, sans-serif' }}>How It Works</a></li>
                 <li><a href="#" className="text-text-primary-light hover:text-brand-blue transition-colors text-sm font-normal" style={{ fontFamily: 'Open Sans, sans-serif' }}>Blog</a></li>
               </ul>
@@ -30,9 +30,9 @@ export default function Footer() {
 
             {/* Explore */}
             <div>
-              <h4 className="text-base font-bold mb-4 text-text-primary" style={{ fontFamily: 'Open Sans, sans-serif' }}>Explore</h4>
+                      <h4 className="text-base font-bold mb-4 text-text-primary font-sans">Explore</h4>
               <ul className="space-y-2">
-                <li><a href="#" className="text-text-primary-light hover:text-brand-blue transition-colors text-sm font-normal" style={{ fontFamily: 'Open Sans, sans-serif' }}>Recommended Books</a></li>
+                        <li><a href="#" className="text-text-primary-light hover:text-brand-blue transition-colors text-sm font-normal font-sans">Recommended Books</a></li>
                 <li><a href="#" className="text-text-primary-light hover:text-brand-blue transition-colors text-sm font-normal" style={{ fontFamily: 'Open Sans, sans-serif' }}>Recommended Movies</a></li>
                 <li><a href="#" className="text-text-primary-light hover:text-brand-blue transition-colors text-sm font-normal" style={{ fontFamily: 'Open Sans, sans-serif' }}>Top Picks</a></li>
               </ul>
@@ -40,9 +40,9 @@ export default function Footer() {
 
             {/* Support */}
             <div>
-              <h4 className="text-base font-bold mb-4 text-text-primary" style={{ fontFamily: 'Open Sans, sans-serif' }}>Support</h4>
+                      <h4 className="text-base font-bold mb-4 text-text-primary font-sans">Support</h4>
               <ul className="space-y-2">
-                <li><a href="#" className="text-text-primary-light hover:text-brand-blue transition-colors text-sm font-normal" style={{ fontFamily: 'Open Sans, sans-serif' }}>Help Center</a></li>
+                        <li><a href="#" className="text-text-primary-light hover:text-brand-blue transition-colors text-sm font-normal font-sans">Help Center</a></li>
                 <li><a href="#" className="text-text-primary-light hover:text-brand-blue transition-colors text-sm font-normal" style={{ fontFamily: 'Open Sans, sans-serif' }}>FAQ</a></li>
                 <li><a href="#" className="text-text-primary-light hover:text-brand-blue transition-colors text-sm font-normal" style={{ fontFamily: 'Open Sans, sans-serif' }}>Contact Us</a></li>
               </ul>
@@ -50,9 +50,9 @@ export default function Footer() {
 
             {/* Legal */}
             <div>
-              <h4 className="text-base font-bold mb-4 text-text-primary" style={{ fontFamily: 'Open Sans, sans-serif' }}>Legal</h4>
+                      <h4 className="text-base font-bold mb-4 text-text-primary font-sans">Legal</h4>
               <ul className="space-y-2">
-                <li><a href="#" className="text-text-primary-light hover:text-brand-blue transition-colors text-sm font-normal" style={{ fontFamily: 'Open Sans, sans-serif' }}>Privacy Policy</a></li>
+                        <li><a href="#" className="text-text-primary-light hover:text-brand-blue transition-colors text-sm font-normal font-sans">Privacy Policy</a></li>
                 <li><a href="#" className="text-text-primary-light hover:text-brand-blue transition-colors text-sm font-normal" style={{ fontFamily: 'Open Sans, sans-serif' }}>Terms of Service</a></li>
                 <li><a href="#" className="text-text-primary-light hover:text-brand-blue transition-colors text-sm font-normal" style={{ fontFamily: 'Open Sans, sans-serif' }}>Cookies Policy</a></li>
               </ul>
@@ -67,7 +67,7 @@ export default function Footer() {
         <div className="flex flex-col md:flex-row justify-between items-center">
           {/* Copyright */}
           <div className="mb-4 md:mb-0">
-            <p className="text-gray-medium text-xs font-normal" style={{ fontFamily: 'Open Sans, sans-serif' }}>
+                    <p className="text-gray-medium text-xs font-normal font-sans">
               © 2025 RecoReads&Movies. All rights reserved.
             </p>
           </div>
