@@ -83,6 +83,7 @@ def register_user(user_data: UserCreate, db: Session = Depends(get_db)):
     new_user = User(
         email=user_data.email,
         hashed_password=hashed_password
+        , location=user_data.location
     )
     
     # Шаг 4: Сохранение в БД

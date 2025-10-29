@@ -20,6 +20,11 @@ class UserCreate(BaseModel):
         max_length=100,
         description="Подтверждение пароля"
     )
+    location: str = Field(  
+        min_length=2,
+        max_length=255,
+        description="Местоположение пользователя"
+    )
     
     @field_validator('confirm_password')
     def passwords_match(cls, v, info):
@@ -33,7 +38,8 @@ class UserResponse(BaseModel):
     """Схема для ответа (без пароля!)"""
     id: int
     email: str
+    location: str 
     created_at: datetime
     
     class Config:
-        from_attributes = True  #для роботи з sqlalchemy моделями
+        from_attributes = True  # для роботи з sqlalchemy моделями
