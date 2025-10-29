@@ -1,12 +1,12 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app import models, schemas, database
-from app.auth import create_access_token, hash_password
+from app.auth import hash_password, verify_password, create_access_token
 from app.utils import verify_password
-from app.models import User # Саша, зверни увагу на цей імпорт и введи название класса User відповідно до твоєї моделі
-from app.schemas import UserCreate, UserResponse
+from app.models import User 
+from app.schemas import UserCreate, UserResponse, UserLogin
 from app.database import get_db
-from app.auth import hash_password  # ← Твоя функция хеширования
+from app.auth import hash_password 
 
 
 
@@ -100,3 +100,42 @@ def register_user(user_data: UserCreate, db: Session = Depends(get_db)):
     
     # Шаг 5: Возврат данных пользователя (БЕЗ пароля!)
     return new_user
+
+
+@app.post("/api/login")
+def login_user(user_data: UserLogin, db: Session = Depends(get_db)):
+    """
+    Логин пользователя
+    
+    Возвращает JWT токен при успешном входе
+    """
+    
+    # Найти пользователя по email
+    user = db.query(User).filter(User.email == user_data.email).first()
+    
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Неверный email или пароль"
+        )
+    
+    # Проверить пароль
+    if not verify_password(user_data.password, user.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Неверный email или пароль"
+        )
+    
+    # Создать JWT токен
+    access_token = create_access_token(data={"user_id": user.id, "email": user.email})
+    
+    # Вернуть токен
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user": {
+            "id": user.id,
+            "email": user.email,
+            "location": user.location
+        }
+    }
