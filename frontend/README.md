@@ -45,21 +45,4 @@ npm run build
 npm start
 ```
 
-## Project Structure
 
-```
-frontend/
-├── app/                 # Next.js App Router
-├── components/          # React components
-├── lib/                # Utility functions
-├── mocks/              # Mock data
-├── public/             # Static assets
-└── types/              # TypeScript definitions
-```
-
-## Development Notes
-
-- Uses TailwindCSS for styling
-- Mock data for development
-- LocalStorage for user persistence
-- TypeScript for type safety

@@ -16,7 +16,6 @@
   --color-gray-very-light: #F4F4F4; /* дуже світлий сірий */
   --color-white-pure: #FFFFFF;      /* класичний білий */
   
-  /* Border radius для кнопок та імпутів */
   --button-radius: 0.5rem;          /* 8px - стандартне скруглення для кнопок */
   --input-radius-pill: 9999px;      /* повне скруглення для імпутів */
 }

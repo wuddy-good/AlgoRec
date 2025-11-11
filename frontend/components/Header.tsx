@@ -1,13 +1,25 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
+import Link from 'next/link';
 import { getUser } from '@/lib/userStorage';
+import { useProfile } from '@/lib/hooks/useProfile';
 import { FiSearch } from 'react-icons/fi';
 
 export default function Header() {
   const pathname = usePathname();
   const isHomePage = pathname === '/';
-  const user = getUser();
+  const currentUser = getUser();
+  const { user } = useProfile(currentUser.id);
+  const getAvatarSrc = () => {
+    const avatar = user?.avatar;
+    if (typeof avatar === 'string') {
+      const trimmed = avatar.trim();
+      const isValid = /^(data:image|https?:\/\/|\/)/.test(trimmed);
+      if (trimmed && isValid) return trimmed;
+    }
+    return '/user.svg';
+  };
 
   return (
     <header className="bg-white-pure shadow-sm w-full">
@@ -27,31 +39,31 @@ export default function Header() {
             {isHomePage ? (
               // Навігація для головної сторінки (неавторизовані користувачі)
               <>
-                <a href="/" className="text-text-primary hover:text-brand-blue px-3 py-2 rounded-md text-sm font-medium">
+                <Link href="/" className="text-text-primary hover:text-brand-blue px-3 py-2 rounded-md text-sm font-medium">
                   Home
-                </a>
-                <a href="/books" className="text-text-primary hover:text-brand-blue px-3 py-2 rounded-md text-sm font-medium">
+                </Link>
+                <Link href="/books" className="text-text-primary hover:text-brand-blue px-3 py-2 rounded-md text-sm font-medium">
                   Books
-                </a>
-                <a href="/films" className="text-text-primary hover:text-brand-blue px-3 py-2 rounded-md text-sm font-medium">
+                </Link>
+                <Link href="/films" className="text-text-primary hover:text-brand-blue px-3 py-2 rounded-md text-sm font-medium">
                   Films
-                </a>
-                <a href="/about" className="text-text-primary hover:text-brand-blue px-3 py-2 rounded-md text-sm font-medium">
+                </Link>
+                <Link href="/about" className="text-text-primary hover:text-brand-blue px-3 py-2 rounded-md text-sm font-medium">
                   About
-                </a>
+                </Link>
               </>
             ) : (
               // Навігація для авторизованих користувачів
               <>
-                <a href="/dashboard" className="text-text-primary hover:text-brand-blue px-3 py-2 rounded-md text-sm font-medium">
+                <Link href="/dashboard" className="text-text-primary hover:text-brand-blue px-3 py-2 rounded-md text-sm font-medium">
                   Dashboard
-                </a>
-                <a href="/catalog" className="text-text-primary hover:text-brand-blue px-3 py-2 rounded-md text-sm font-medium">
+                </Link>
+                <Link href="/catalog" className="text-text-primary hover:text-brand-blue px-3 py-2 rounded-md text-sm font-medium">
                   Catalog
-                </a>
-                <a href="/profile" className="text-brand-blue px-3 py-2 rounded-md text-sm font-medium">
+                </Link>
+                <Link href="/profile" className="text-brand-blue px-3 py-2 rounded-md text-sm font-medium">
                   Profile
-                </a>
+                </Link>
               </>
             )}
           </nav>
@@ -82,10 +94,17 @@ export default function Header() {
                 </button>
               </div>
             ) : (
-              <div className="h-8 w-8 rounded-full bg-gray-very-light flex items-center justify-center">
-                <span className="text-sm font-medium text-gray-medium">
-                  {user.name.charAt(0).toUpperCase()}
-                </span>
+              <div className="h-7 w-7 rounded-full overflow-hidden">
+                <img 
+                  src={getAvatarSrc()}
+                  alt="User avatar"
+                  width={28}
+                  height={28}
+                  loading="eager"
+                  decoding="async"
+                  onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/user.svg'; }}
+                  className="w-full h-full object-contain p-0.5 rounded-full"
+                />
               </div>
             )}
           </div>
