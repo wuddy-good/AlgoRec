@@ -1,4 +1,3 @@
-# Hashing and verifying passwords using passlib
 from passlib.context import CryptContext
 
 

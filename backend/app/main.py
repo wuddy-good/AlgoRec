@@ -46,7 +46,6 @@ app = FastAPI(
 
 @app.get("/")
 def root():
-    """Проверка работы API"""
     return {"message": "Movie Site API is running!"}
 
 
