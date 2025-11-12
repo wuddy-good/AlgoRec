@@ -15,7 +15,7 @@ class Book(Base):
     __tablename__ = "books"
     
     id = Column(Integer, primary_key=True, index=True)
-    isbn = Column(String(20), unique=True, index=True, nullable=False)
+    isbn = Column(String(20), unique=True, index=True, nullable=True)
     title = Column(String(500), nullable=False, index=True)
     author = Column(String(255), index=True)
     year = Column(Integer)
