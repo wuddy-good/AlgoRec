@@ -1,5 +1,7 @@
 from pydantic import BaseModel, EmailStr, Field, field_validator
 from datetime import datetime
+from typing import Optional
+
 
 class UserLogin(BaseModel):
     email: str
@@ -42,12 +44,12 @@ class UserResponse(BaseModel):
 class BookBase(BaseModel):
     isbn: str
     title: str
-    author: str | None = None
-    year: int | None = None
-    publisher: str | None = None
-    image_url_s: str | None = None
-    image_url_m: str | None = None
-    image_url_l: str | None = None
+    author: Optional[str] = None
+    year: Optional[int] = None
+    publisher: Optional[str] = None
+    image_url_s: Optional[str] = None
+    image_url_m: Optional[str] = None
+    image_url_l: Optional[str] = None
 
 class BookCreate(BookBase):
     pass
