@@ -3,8 +3,17 @@ from sqlalchemy.orm import Session
 from app import models, schemas, database
 from app.auth import create_access_token
 from app.utils import verify_password
+# === НОВИЙ ІМПОРТ ===
+from backend.app.routers import recommendations
 
 app = FastAPI()
+
+# === ПІДКЛЮЧЕННЯ РОУТЕРА РЕКОМЕНДАЦІЙ ===
+app.include_router(
+    recommendations.router,
+    prefix="/api/v1/recommendations",
+    tags=["recommendations"]
+)
 
 @app.post("/login")
 def login(user: schemas.UserLogin, db: Session = Depends(database.get_db)):
