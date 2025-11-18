@@ -59,3 +59,9 @@ class BookResponse(BookBase):
     
     class Config:
         from_attributes = True
+
+class RatingCreate(BaseModel):
+    user_id: int
+    book_id: int
+    rating: int = Field(ge=0,le=10, description="Рейтинг від 0 до 10")
+

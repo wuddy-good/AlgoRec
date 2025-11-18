@@ -1,13 +1,15 @@
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Depends, HTTPException, status, APIRouter
 from sqlalchemy.orm import Session
 from app import models, schemas, database
 from app.auth import hash_password, verify_password, create_access_token
 from app.utils import verify_password
-from app.models import User 
-from app.schemas import UserCreate, UserResponse, UserLogin
+from app.models import User, Book, Rating
+from app.schemas import UserCreate, UserResponse, UserLogin, RatingCreate
 from app.database import get_db
+from typing import List
+from sqlalchemy import func, desc
 
-app = FastAPI("Movie Site API")
+app = FastAPI()
 
 @app.post("/login")
 def login(user: schemas.UserLogin, db: Session = Depends(database.get_db)):
@@ -101,3 +103,43 @@ def login_user(user_data: UserLogin, db: Session = Depends(get_db)):
             "location": user.location
         }
     }
+
+
+@app.get("/api/popular_books_detailed")
+def get_popular_books_detailed(
+    limit: int = 10,
+    db: Session = Depends(get_db)
+):  
+    popular_books = (
+        db.query(
+            Book,
+            func.count(Rating.id).label('rating_count'),
+            func.avg(Rating.rating).label('avg_rating')
+        )
+        .join(Rating, Book.id == Rating.book_id)
+        .group_by(Book.id)
+        .order_by(desc('rating_count'))
+        .limit(limit)
+        .all()
+    )
+    
+    if not popular_books:
+        return {"message": "Не знайдено популярних книг. Додайте оцінки."}
+
+    result = []
+    for book, rating_count, avg_rating in popular_books:
+        result.append({
+            "id": book.id,
+            "isbn": book.isbn,
+            "title": book.title,
+            "author": book.author,
+            "year": book.year,
+            "publisher": book.publisher,
+            "image_url_s": book.image_url_s, 
+            "image_url_m": book.image_url_m, 
+            "image_url_l": book.image_url_l, 
+            "rating_count": rating_count,
+            "avg_rating": round(float(avg_rating), 2)
+        })
+    
+    return result

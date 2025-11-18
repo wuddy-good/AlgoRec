@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.sql import func
 from app.base import Base
 
@@ -26,3 +26,12 @@ class Book(Base):
     
     def __repr__(self):
         return f"<Book {self.title}>"
+
+class Rating(Base):
+    __tablename__ = "ratings"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    book_id = Column(Integer, ForeignKey("books.id"), nullable=False)
+    rating = Column(Integer, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
