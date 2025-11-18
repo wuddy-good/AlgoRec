@@ -27,8 +27,8 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="w-[231px] bg-white-pure min-h-screen border-r border-gray-very-light">
-      <div className="p-4 flex flex-col items-center h-full">
+    <aside className="w-[231px] bg-white-pure border-r border-gray-very-light flex flex-col">
+      <div className="p-4 flex flex-col items-center flex-1 w-full">
         {/* Settings Button */}
                 <button
                   onClick={handleEditProfile}
@@ -38,12 +38,9 @@ export default function Sidebar() {
           Settings
         </button>
 
-        {/* Spacer */}
-        <div className="flex-1"></div>
-
         {/* Logout Button */}
                 <button 
-                  className="w-25 flex items-center justify-center px-3 py-2 text-sm font-normal text-white-pure bg-text-primary rounded-lg shadow-sm hover:bg-text-primary-dark transition-colors"
+                  className="w-25 flex items-center justify-center px-3 py-2 text-sm font-normal text-white-pure bg-text-primary rounded-lg shadow-sm hover:bg-text-primary-dark transition-colors mt-auto"
                 >
           <FiLogOut className="w-5 h-5 mr-3" style={{ strokeWidth: 1.5 }} />
           Logout
