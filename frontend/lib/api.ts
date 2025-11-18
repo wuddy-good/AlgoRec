@@ -25,16 +25,23 @@ const apiRequest = async <T = unknown>(endpoint: string, options: RequestInit = 
     headers,
   });
 
-  if (!response.ok) {
-    throw new Error(`API Error: ${response.statusText}`);
-  }
-
   // 204 No Content або порожнє тіло
   if (response.status === 204) {
     return null as T;
   }
 
   const text = await response.text();
+  
+  if (!response.ok) {
+    // Спробувати отримати детальну помилку з бекенду
+    try {
+      const errorData = JSON.parse(text);
+      throw new Error(errorData.detail || response.statusText);
+    } catch {
+      throw new Error(text || `API Error: ${response.statusText}`);
+    }
+  }
+
   if (!text) {
     return null as T;
   }
@@ -149,40 +156,63 @@ export const watchlistApi = {
 export const authApi = {
   // Логін
   login: async (email: string, password: string): Promise<{ user: User; token: string }> => {
-    return apiRequest<{ user: User; token: string }>(
-      '/api/auth/login',
-      {
+    const response = await apiRequest<{
+      access_token: string;
+      token_type: string;
+      user: { id: number; email: string; location: string };
+    }>('/api/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
-      }
-    );
+    });
+
+    // Конвертуємо відповідь бекенду в формат, який очікує фронтенд
+    return {
+      token: response.access_token,
+      user: {
+        id: response.user.id,
+        email: response.user.email,
+        name: response.user.email.split('@')[0], // Тимчасово використовуємо email як name
+        avatar: '', // Бекенд не повертає avatar
+      },
+    };
   },
 
   // Реєстрація
-  register: async (userData: { name: string; email: string; password: string }): Promise<{ user: User; token: string }> => {
-    return apiRequest<{ user: User; token: string }>(
-      '/api/auth/register',
-      {
+  register: async (userData: {
+    email: string;
+    password: string;
+    confirm_password: string;
+    location: string;
+  }): Promise<{ user: User; token: string }> => {
+    // Спочатку реєструємо користувача
+    const registerResponse = await apiRequest<{
+      id: number;
+      email: string;
+      location: string;
+      created_at: string;
+    }>('/api/register', {
       method: 'POST',
-      body: JSON.stringify(userData),
-      }
-    );
-  },
-
-  // Вихід
-  logout: async (): Promise<void> => {
-    return apiRequest<void>('/api/auth/logout', {
-      method: 'POST',
+      body: JSON.stringify({
+        email: userData.email,
+        password: userData.password,
+        confirm_password: userData.confirm_password,
+        location: userData.location,
+      }),
     });
+
+    // Після успішної реєстрації автоматично логінуємо користувача
+    return authApi.login(userData.email, userData.password);
   },
 
-  // Оновити токен
+  // Вихід (поки що не реалізовано в бекенді, просто очищаємо токен)
+  logout: async (): Promise<void> => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('auth_token');
+    }
+  },
+
+  // Оновити токен (поки що не реалізовано в бекенді)
   refreshToken: async (): Promise<{ token: string }> => {
-    return apiRequest<{ token: string }>(
-      '/api/auth/refresh',
-      {
-      method: 'POST',
-      }
-    );
+    throw new Error('Token refresh not implemented in backend yet');
   },
 };
