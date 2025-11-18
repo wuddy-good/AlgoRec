@@ -12,23 +12,27 @@ export default function LayoutClient({
 }) {
   const pathname = usePathname();
   const isHomePage = pathname === '/';
+  
+  // Show sidebar for all pages except home page
+  // This includes 404, profile, dashboard, catalog, etc.
+  const showSidebar = !isHomePage;
 
   return (
-    <>
+    <div className="min-h-screen flex flex-col">
       <Header />
-      {isHomePage ? (
-        <main className="flex-1">
-          {children}
-        </main>
-      ) : (
+      {showSidebar ? (
         <div className="flex flex-1">
           <Sidebar />
           <main className="flex-1">
             {children}
           </main>
         </div>
+      ) : (
+        <main className="flex-1">
+          {children}
+        </main>
       )}
       <Footer />
-    </>
+    </div>
   );
 }
