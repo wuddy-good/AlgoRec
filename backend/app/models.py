@@ -24,9 +24,5 @@ class Book(Base):
     image_url_m = Column(String(500))
     image_url_l = Column(String(500))
     
-    # Связи (добавишь позже, когда будут другие таблицы)
-    # ratings = relationship("Rating", back_populates="book")
-    # favorites = relationship("Favorite", back_populates="book")
-    
     def __repr__(self):
         return f"<Book {self.title}>"
