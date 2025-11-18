@@ -9,7 +9,7 @@ class User(Base):
     email = Column(String(255), unique=True, index=True, nullable=False)
     hashed_password = Column(String(255), nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    location = Column(String(255), nullable=False)
+    location = Column(String(255), nullable=True)
 
 class Book(Base):
     __tablename__ = "books"
