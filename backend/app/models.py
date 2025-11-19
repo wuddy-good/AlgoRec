@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Boolean
 from sqlalchemy.sql import func
 from app.base import Base
 
@@ -31,7 +31,18 @@ class Rating(Base):
     __tablename__ = "ratings"
     
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    book_id = Column(Integer, ForeignKey("books.id"), nullable=False)
+    user_id = Column(Integer, nullable=False) 
+    book_id = Column(Integer, nullable=False) 
     rating = Column(Integer, nullable=False)
+    is_bot = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+class BotUser(Base):
+    __tablename__ = "bot_users"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    location = Column(String(255), nullable=True)
+    age = Column(Integer, nullable=True)
+    
+    def __repr__(self):
+        return f"<BotUser {self.id}>"

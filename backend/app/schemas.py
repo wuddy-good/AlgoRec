@@ -60,8 +60,30 @@ class BookResponse(BookBase):
     class Config:
         from_attributes = True
 
-class RatingCreate(BaseModel):
+class RatingBase(BaseModel):
     user_id: int
     book_id: int
-    rating: int = Field(ge=0,le=10, description="Рейтинг від 0 до 10")
+    rating: int = Field(ge=0, le=10, description="Рейтинг від 0 до 10")
+    is_bot: bool = False
 
+class RatingCreate(RatingBase):
+    pass
+class RatingResponse(RatingBase):
+    id: int
+    created_at: datetime
+    
+    class Config:
+        from_attributes = True
+
+class BotUserBase(BaseModel):
+    location: str | None = None
+    age: int | None = None
+
+class BotUserCreate(BotUserBase):
+    id: int 
+
+class BotUserResponse(BotUserBase):
+    id: int
+    
+    class Config:
+        from_attributes = True
