@@ -6,6 +6,7 @@ __pycache__/
 *.pyo
 .idea/
 .vscode/
+*.csv
 =======
 # macOS
 .DS_Store
@@ -60,4 +61,5 @@ backend/.coverage
 backend/coverage.xml
 backend/htmlcov/
 backend/.ruff_cache/
+backend/data/*.csv
 >>>>>>> 50aec7dfac1db8532151385b399d1eebd186fe7e
