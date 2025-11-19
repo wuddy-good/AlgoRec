@@ -6,7 +6,7 @@ __pycache__/
 *.pyo
 .idea/
 .vscode/
-*.csv
+
 =======
 # macOS
 .DS_Store
@@ -15,9 +15,19 @@ __pycache__/
 .env
 .env.*
 
-# Logs and DB
-*.log
+# Database - НЕ ЗАГРУЖАТЬ В GIT!
+*.db
+*.sqlite
 *.sqlite3
+app.db
+backend/app.db
+
+# CSV датасеты - БОЛЬШИЕ ФАЙЛЫ
+*.csv
+backend/data/*.csv
+
+# Logs
+*.log
 
 # Python
 __pycache__/
@@ -30,6 +40,8 @@ __pycache__/
 dist/
 build/
 .cache/
+venv/
+.venv/
 coverage/
 *.cover
 *.pytest_cache/
@@ -39,9 +51,8 @@ coverage/
 .idea/
 *.swp
 *.swo
-*.csv
 
-# Node/Frontend (якщо буде)
+# Node/Frontend
 node_modules/
 frontend/.next/
 frontend/.nuxt/
@@ -53,7 +64,7 @@ frontend/.turbo/
 frontend/coverage/
 frontend/.eslintcache
 
-# Backend virtual environment
+# Backend
 backend/venv/
 backend/.mypy_cache/
 backend/.pytest_cache/
@@ -61,5 +72,3 @@ backend/.coverage
 backend/coverage.xml
 backend/htmlcov/
 backend/.ruff_cache/
-backend/data/*.csv
->>>>>>> 50aec7dfac1db8532151385b399d1eebd186fe7e
