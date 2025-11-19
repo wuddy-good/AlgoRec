@@ -1,12 +1,12 @@
-from fastapi import FastAPI, Depends, HTTPException, status, APIRouter
+from fastapi import FastAPI, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
 from app import models, schemas, database
 from app.auth import hash_password, verify_password, create_access_token
 from app.utils import verify_password
 from app.models import User, Book, Rating
-from app.schemas import UserCreate, UserResponse, UserLogin, RatingCreate
+from app.schemas import UserCreate, UserResponse, UserLogin, RatingCreate, BookResponse
 from app.database import get_db
-from typing import List
+from typing import List, Optional
 from sqlalchemy import func, desc
 
 app = FastAPI()
@@ -143,3 +143,17 @@ def get_popular_books_detailed(
         })
     
     return result
+
+@app.get("/books", response_model=List[BookResponse])
+def get_all_books(
+    skip: int = Query(0, description="Кількість пропущених книг"),
+    limit: int = Query(100, description="Максимальна кількість книг для отримання"),
+    db: Session = Depends(get_db)
+):
+    
+    try:
+        books = db.query(Book).offset(skip).limit(limit).all()
+        return books
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Помилка при отриманні книг: {str(e)}")
+    

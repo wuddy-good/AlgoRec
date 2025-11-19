@@ -76,8 +76,8 @@ class RatingResponse(RatingBase):
         from_attributes = True
 
 class BotUserBase(BaseModel):
-    location: str | None = None
-    age: int | None = None
+    location: Optional[str] = None
+    age: Optional[int] = None
 
 class BotUserCreate(BotUserBase):
     id: int 
