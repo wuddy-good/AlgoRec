@@ -63,3 +63,4 @@ backend/.ruff_cache/
 *.csv
 *.db
 backend/data/*.csv
+backend/app.db
