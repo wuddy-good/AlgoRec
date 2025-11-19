@@ -38,6 +38,7 @@ coverage/
 .idea/
 *.swp
 *.swo
+*.csv
 
 # Node/Frontend (якщо буде)
 node_modules/
