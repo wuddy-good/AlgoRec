@@ -204,7 +204,7 @@ export const authApi = {
     return authApi.login(userData.email, userData.password);
   },
 
-  // Вихід
+  // Вихід (поки що не реалізовано в бекенді, просто очищаємо токен)
   logout: async (): Promise<void> => {
     if (typeof window !== 'undefined') {
       localStorage.removeItem('auth_token');
@@ -212,7 +212,7 @@ export const authApi = {
     }
   },
 
-  // Оновити токен
+  // Оновити токен (поки що не реалізовано в бекенді)
   refreshToken: async (): Promise<{ token: string }> => {
     throw new Error('Token refresh endpoint is not implemented in backend yet');
   },
