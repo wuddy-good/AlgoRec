@@ -1,6 +1,7 @@
 // Базовий API service для легкого підключення бекенду
 
 import { User, WatchlistItem, Rating } from '@/types';
+import { setUser, clearUser } from '@/lib/userStorage';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -33,12 +34,11 @@ const apiRequest = async <T = unknown>(endpoint: string, options: RequestInit = 
   const text = await response.text();
   
   if (!response.ok) {
-    // Спробувати отримати детальну помилку з бекенду
     try {
-      const errorData = JSON.parse(text);
-      throw new Error(errorData.detail || response.statusText);
+      const errorData = text ? JSON.parse(text) : null;
+      throw new Error(errorData?.detail || response.statusText || 'API error');
     } catch {
-      throw new Error(text || `API Error: ${response.statusText}`);
+      throw new Error(text || `API Error: ${response.status} ${response.statusText}`);
     }
   }
 
@@ -159,21 +159,28 @@ export const authApi = {
     const response = await apiRequest<{
       access_token: string;
       token_type: string;
-      user: { id: number; email: string; location: string };
+      user: { id: number; email: string; location: string | null };
     }>('/api/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     });
 
-    // Конвертуємо відповідь бекенду в формат, який очікує фронтенд
+    const normalizedUser: User = {
+      id: response.user.id,
+      email: response.user.email,
+      name: response.user.email.split('@')[0],
+      avatar: '',
+      location: response.user.location || '',
+    };
+
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('auth_token', response.access_token);
+      setUser(normalizedUser);
+    }
+
     return {
       token: response.access_token,
-      user: {
-        id: response.user.id,
-        email: response.user.email,
-        name: response.user.email.split('@')[0], // Тимчасово використовуємо email як name
-        avatar: '', // Бекенд не повертає avatar
-      },
+      user: normalizedUser,
     };
   },
 
@@ -184,13 +191,7 @@ export const authApi = {
     confirm_password: string;
     location: string;
   }): Promise<{ user: User; token: string }> => {
-    // Спочатку реєструємо користувача
-    const registerResponse = await apiRequest<{
-      id: number;
-      email: string;
-      location: string;
-      created_at: string;
-    }>('/api/register', {
+    await apiRequest('/api/register', {
       method: 'POST',
       body: JSON.stringify({
         email: userData.email,
@@ -200,7 +201,6 @@ export const authApi = {
       }),
     });
 
-    // Після успішної реєстрації автоматично логінуємо користувача
     return authApi.login(userData.email, userData.password);
   },
 
@@ -208,11 +208,12 @@ export const authApi = {
   logout: async (): Promise<void> => {
     if (typeof window !== 'undefined') {
       localStorage.removeItem('auth_token');
+      clearUser();
     }
   },
 
   // Оновити токен (поки що не реалізовано в бекенді)
   refreshToken: async (): Promise<{ token: string }> => {
-    throw new Error('Token refresh not implemented in backend yet');
+    throw new Error('Token refresh endpoint is not implemented in backend yet');
   },
 };
