@@ -6,6 +6,7 @@ class UserLogin(BaseModel):
     email: str
     password: str
 
+
 class UserCreate(BaseModel):
     email: EmailStr
     password: str = Field(
@@ -30,6 +31,7 @@ class UserCreate(BaseModel):
             raise ValueError('Паролі не співпадають')
         return v
 
+
 class UserResponse(BaseModel):
     id: int
     email: str
@@ -39,6 +41,7 @@ class UserResponse(BaseModel):
     class Config:
         from_attributes = True 
 
+
 class UserUpdate(BaseModel):
     email: Optional[EmailStr] = None
     location: Optional[str] = Field(None, min_length=2, max_length=255)
@@ -46,6 +49,7 @@ class UserUpdate(BaseModel):
     
     class Config:
         from_attributes = True
+
 
 class BookBase(BaseModel):
     isbn: Optional[str] = None
@@ -57,8 +61,10 @@ class BookBase(BaseModel):
     image_url_m: Optional[str] = None
     image_url_l: Optional[str] = None
 
+
 class BookCreate(BookBase):
     pass
+
 
 class BookResponse(BookBase):
     id: int
@@ -66,12 +72,15 @@ class BookResponse(BookBase):
     class Config:
         from_attributes = True
 
+
 class BotUserBase(BaseModel):
     location: Optional[str] = None
     age: Optional[int] = None
 
+
 class BotUserCreate(BotUserBase):
     id: int
+
 
 class BotUserResponse(BotUserBase):
     id: int
@@ -79,14 +88,17 @@ class BotUserResponse(BotUserBase):
     class Config:
         from_attributes = True
 
+
 class RatingBase(BaseModel):
     user_id: int
     book_id: int
     rating: int = Field(ge=0, le=10, description="Рейтинг від 0 до 10")
     is_bot: bool = False
 
+
 class RatingCreate(RatingBase):
     pass
+
 
 class RatingResponse(RatingBase):
     id: int
@@ -95,8 +107,10 @@ class RatingResponse(RatingBase):
     class Config:
         from_attributes = True
 
+
 class WatchlistCreate(BaseModel):
     book_id: int
+
 
 class WatchlistResponse(BaseModel):
     id: int
@@ -107,6 +121,7 @@ class WatchlistResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 class WatchlistWithBook(BaseModel):
     id: int
     book_id: int
@@ -115,3 +130,4 @@ class WatchlistWithBook(BaseModel):
     
     class Config:
         from_attributes = True
+
