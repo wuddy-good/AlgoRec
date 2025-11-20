@@ -10,14 +10,20 @@ class UserLogin(BaseModel):
 
 class UserCreate(BaseModel):
     email: EmailStr
-    password: str = Field(min_length=8, max_length=100, description="Мінімум 8 символів")
-    confirm_password: str = Field(min_length=8, max_length=100, description="Підтвердження пароля")
-    location: str = Field(min_length=2, max_length=255, description="Місце розташування користувача")
+    password: str = Field(
+        min_length=8, max_length=100, description="Мінімум 8 символів"
+    )
+    confirm_password: str = Field(
+        min_length=8, max_length=100, description="Підтвердження пароля"
+    )
+    location: str = Field(
+        min_length=2, max_length=255, description="Місце розташування користувача"
+    )
 
-    @field_validator('confirm_password')
+    @field_validator("confirm_password")
     def passwords_match(cls, value, info):
-        if 'password' in info.data and value != info.data['password']:
-            raise ValueError('Паролі не співпадають')
+        if "password" in info.data and value != info.data["password"]:
+            raise ValueError("Паролі не співпадають")
         return value
 
 
