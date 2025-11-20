@@ -9,7 +9,6 @@ engine = create_engine(
 )
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# создание таблиц
 Base.metadata.create_all(bind=engine)
 
 def get_db():
