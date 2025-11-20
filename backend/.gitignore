@@ -39,6 +39,10 @@ coverage/
 *.swp
 *.swo
 
+# App database
+app.db
+
+
 # Node/Frontend (якщо буде)
 node_modules/
 frontend/.next/
