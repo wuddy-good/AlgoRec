@@ -6,7 +6,8 @@ const defaultUser: User = {
   id: 1,
   name: "Jacob Jones",
   avatar: "/avatars/jacob.jpg",
-  email: "jacob@example.com"
+  email: "jacob@example.com",
+  location: ''
 };
 
 export const getUser = (): User => {

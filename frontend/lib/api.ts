@@ -1,6 +1,7 @@
 // Базовий API service для легкого підключення бекенду
 
 import { User, WatchlistItem, Rating } from '@/types';
+import { setUser, clearUser } from '@/lib/userStorage';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -25,16 +26,22 @@ const apiRequest = async <T = unknown>(endpoint: string, options: RequestInit = 
     headers,
   });
 
-  if (!response.ok) {
-    throw new Error(`API Error: ${response.statusText}`);
-  }
-
   // 204 No Content або порожнє тіло
   if (response.status === 204) {
     return null as T;
   }
 
   const text = await response.text();
+  
+  if (!response.ok) {
+    try {
+      const errorData = text ? JSON.parse(text) : null;
+      throw new Error(errorData?.detail || response.statusText || 'API error');
+    } catch {
+      throw new Error(text || `API Error: ${response.status} ${response.statusText}`);
+    }
+  }
+
   if (!text) {
     return null as T;
   }
@@ -149,40 +156,64 @@ export const watchlistApi = {
 export const authApi = {
   // Логін
   login: async (email: string, password: string): Promise<{ user: User; token: string }> => {
-    return apiRequest<{ user: User; token: string }>(
-      '/api/auth/login',
-      {
+    const response = await apiRequest<{
+      access_token: string;
+      token_type: string;
+      user: { id: number; email: string; location: string | null };
+    }>('/api/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
-      }
-    );
+    });
+
+    const normalizedUser: User = {
+      id: response.user.id,
+      email: response.user.email,
+      name: response.user.email.split('@')[0],
+      avatar: '',
+      location: response.user.location || '',
+    };
+
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('auth_token', response.access_token);
+      setUser(normalizedUser);
+    }
+
+    return {
+      token: response.access_token,
+      user: normalizedUser,
+    };
   },
 
   // Реєстрація
-  register: async (userData: { name: string; email: string; password: string }): Promise<{ user: User; token: string }> => {
-    return apiRequest<{ user: User; token: string }>(
-      '/api/auth/register',
-      {
+  register: async (userData: {
+    email: string;
+    password: string;
+    confirm_password: string;
+    location: string;
+  }): Promise<{ user: User; token: string }> => {
+    await apiRequest('/api/register', {
       method: 'POST',
-      body: JSON.stringify(userData),
-      }
-    );
+      body: JSON.stringify({
+        email: userData.email,
+        password: userData.password,
+        confirm_password: userData.confirm_password,
+        location: userData.location,
+      }),
+    });
+
+    return authApi.login(userData.email, userData.password);
   },
 
   // Вихід
   logout: async (): Promise<void> => {
-    return apiRequest<void>('/api/auth/logout', {
-      method: 'POST',
-    });
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('auth_token');
+      clearUser();
+    }
   },
 
   // Оновити токен
   refreshToken: async (): Promise<{ token: string }> => {
-    return apiRequest<{ token: string }>(
-      '/api/auth/refresh',
-      {
-      method: 'POST',
-      }
-    );
+    throw new Error('Token refresh endpoint is not implemented in backend yet');
   },
 };

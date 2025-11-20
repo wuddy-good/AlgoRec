@@ -18,10 +18,11 @@ class UserCreate(BaseModel):
         max_length=100,
         description="Підтвердження пароля"
     )
-    location: str = Field(  
+    location: Optional[str] = Field(
+        default=None,
         min_length=2,
         max_length=255,
-        description="Місце розташування користувача"
+        description="Місце розташування користувача (необов'язково)"
     )
     
     @field_validator('confirm_password')
@@ -33,7 +34,7 @@ class UserCreate(BaseModel):
 class UserResponse(BaseModel):
     id: int
     email: str
-    location: str 
+    location: Optional[str]
     created_at: datetime
     
     class Config:

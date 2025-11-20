@@ -6,10 +6,9 @@
 - Базовий fetch з авторизацією
 - Обробка помилок
 - JWT токени
-- Методи для рейтингів (CRUD)
-- Методи для користувачів (CRUD)
-- Методи для watchlist (CRUD)
-- Методи для авторизації (login/register/logout)
+- Методи для рейтингів/користувачів/watchlist залишаються як заглушки до появи бекенду
+- Методи для авторизації (login/register) синхронізовані з бекендом
+- logout/refresh наразі працюють тільки локально (бекенд ще без цих маршрутів)
 
 ### 2. Custom Hooks
 - `useRatings` - з перемикачем моки/API
@@ -37,38 +36,17 @@ const getAuthToken = (): string | null => {
 };
 ```
 
-##  Очікувані API endpoints
+## Поточні API endpoints
 
-### Авторизація
+### Авторизація (реалізовано в бекенді)
 ```
-POST /api/auth/login
-POST /api/auth/register  
-POST /api/auth/logout
-POST /api/auth/refresh
+POST /api/register
+POST /api/login
 ```
+> Logout/refresh на бекенді відсутні, тому фронт лише очищає локальні дані.
 
-### Користувачі
-```
-GET  /api/users/{userId}/profile
-PUT  /api/users/{userId}/profile
-GET  /api/users (для адміна)
-```
-
-### Рейтинги
-```
-GET    /api/users/{userId}/ratings?type=book|movie
-POST   /api/ratings
-PUT    /api/ratings/{ratingId}
-DELETE /api/ratings/{ratingId}
-```
-
-### Watchlist
-```
-GET    /api/users/{userId}/watchlist
-POST   /api/users/{userId}/watchlist
-PUT    /api/users/{userId}/watchlist/{itemId}
-DELETE /api/users/{userId}/watchlist/{itemId}
-```
+### Користувачі, рейтинги, watchlist
+Ці маршрути описані в коді як цільові, але поки що не реалізовані у бекенді. Хуки працюють з localStorage/mocks доти, доки сервер не надасть відповідні endpoints.
 
 ## Переваги архітектури
 
