@@ -39,6 +39,14 @@ class UserResponse(BaseModel):
     class Config:
         from_attributes = True 
 
+class UserUpdate(BaseModel):
+    email: Optional[EmailStr] = None
+    location: Optional[str] = Field(None, min_length=2, max_length=255)
+    password: Optional[str] = Field(None, min_length=8, max_length=100)
+    
+    class Config:
+        from_attributes = True
+
 class BookBase(BaseModel):
     isbn: Optional[str] = None
     title: str

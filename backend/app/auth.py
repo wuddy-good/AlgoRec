@@ -12,7 +12,6 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def create_access_token(data: dict):
-    """Створює JWT-токен з терміном дії."""
     to_encode = data.copy()
     expire = datetime.now(timezone.utc) + timedelta(
         minutes=ACCESS_TOKEN_EXPIRE_MINUTES
