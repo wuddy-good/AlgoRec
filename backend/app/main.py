@@ -6,7 +6,6 @@ from app.utils import verify_password
 from app.models import User 
 from app.schemas import UserCreate, UserResponse, UserLogin
 from app.database import get_db
-from app.auth import hash_password 
 
 
 
@@ -37,12 +36,6 @@ def login(user: schemas.UserLogin, db: Session = Depends(database.get_db)):
         "token_type": "bearer"
     }
 
-
-app = FastAPI(
-    title="Movie Site API",
-    description="API для сайта с фильмами и книгами",
-    version="1.0.0"
-)
 
 @app.get("/")
 def root():
