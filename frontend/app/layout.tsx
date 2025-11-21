@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "RecoMind - Personalized Recommendations",
-  description: "Discover your next favorite books and movies with AI-powered recommendations",
+  title: "RecoMind - Personalized Book Recommendations",
+  description: "Discover your next favorite books with AI-powered recommendations",
   icons: {
     icon: [
       { url: "/logo2.svg?v=1", type: "image/svg+xml" },

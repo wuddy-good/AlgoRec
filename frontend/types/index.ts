@@ -12,14 +12,12 @@ export interface Rating {
   genre: string;
   rating: number;
   date: string;
-  type: 'book' | 'movie';
 }
 
 export interface WatchlistItem {
   id: number;
   title: string;
   genre: string;
-  type: 'book' | 'movie';
   imageUrl: string;
 }
 
@@ -45,5 +43,5 @@ export interface Movie {
   imageUrl: string;
 }
 
-export type ContentType = 'book' | 'movie';
+export type ContentType = 'book';
 export type ContentItem = Book | Movie;

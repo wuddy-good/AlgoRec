@@ -1,11 +1,11 @@
 # RecoMind Frontend
 
-Personalized book and movie recommendation system frontend built with Next.js, TypeScript, and TailwindCSS.
+Personalized book recommendation system frontend built with Next.js, TypeScript, and TailwindCSS.
 
 ## Features
 
 - User profile management
-- Book and movie catalog
+- Book catalog
 - Advanced search functionality
 - Responsive design
 

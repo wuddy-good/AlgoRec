@@ -22,46 +22,41 @@ export default function Header() {
   };
 
   return (
-    <header className="bg-white-pure shadow-sm w-full">
-      <div className="max-w-none mx-auto px-16 py-4">
-        <div className="flex justify-between items-center">
+    <header className="bg-white-pure shadow-sm w-full sticky top-0 z-50">
+      <div className="max-w-none mx-auto px-16 py-5">
+        <div className="flex justify-between items-center gap-6">
           {/* Logo */}
-          <div className="flex items-center">
+          <div className="flex items-center flex-shrink-0">
             <img 
               src="/logo2.svg" 
               alt="RecoMind Logo" 
-              className="h-16 w-auto transform -translate-y-1"
+              className="h-14 w-auto"
             />
           </div>
 
           {/* Navigation */}
-          <nav className="hidden md:flex space-x-8">
+          <nav className="hidden md:flex items-center space-x-6 flex-1 justify-center">
             {isHomePage ? (
-              // Навігація для головної сторінки (неавторизовані користувачі)
               <>
-                <Link href="/" className="text-text-primary hover:text-brand-blue px-3 py-2 rounded-md text-sm font-medium">
+                <Link href="/" className="text-text-primary hover:text-brand-blue px-3 py-2 rounded-md text-sm font-medium transition-colors">
                   Home
                 </Link>
-                <Link href="/books" className="text-text-primary hover:text-brand-blue px-3 py-2 rounded-md text-sm font-medium">
-                  Books
+                <Link href="/catalog" className="text-text-primary hover:text-brand-blue px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                  Catalog
                 </Link>
-                <Link href="/films" className="text-text-primary hover:text-brand-blue px-3 py-2 rounded-md text-sm font-medium">
-                  Films
-                </Link>
-                <Link href="/about" className="text-text-primary hover:text-brand-blue px-3 py-2 rounded-md text-sm font-medium">
-                  About
+                <Link href="/about" className="text-text-primary hover:text-brand-blue px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                  About Us
                 </Link>
               </>
             ) : (
-              // Навігація для авторизованих користувачів
               <>
-                <Link href="/dashboard" className="text-text-primary hover:text-brand-blue px-3 py-2 rounded-md text-sm font-medium">
+                <Link href="/dashboard" className="text-text-primary hover:text-brand-blue px-3 py-2 rounded-md text-sm font-medium transition-colors">
                   Dashboard
                 </Link>
-                <Link href="/catalog" className="text-text-primary hover:text-brand-blue px-3 py-2 rounded-md text-sm font-medium">
+                <Link href="/catalog" className="text-text-primary hover:text-brand-blue px-3 py-2 rounded-md text-sm font-medium transition-colors">
                   Catalog
                 </Link>
-                <Link href="/profile" className="text-brand-blue px-3 py-2 rounded-md text-sm font-medium">
+                <Link href="/profile" className="text-brand-blue px-3 py-2 rounded-md text-sm font-medium transition-colors">
                   Profile
                 </Link>
               </>
@@ -69,41 +64,42 @@ export default function Header() {
           </nav>
 
           {/* Search and Auth Buttons */}
-          <div className="flex items-center space-x-4">
-            <div className="max-w-lg w-96">
+          <div className="flex items-center space-x-4 flex-shrink-0">
+            {/* Пошук - завжди видимий */}
+            <div className="hidden md:block max-w-xs w-64">
               <div className="relative">
                 <input
                   type="text"
-                  placeholder="Search all books and movies"
-                  className="w-full px-4 py-2 pl-10 pr-4 text-xs border-2 border-gray-very-light input-pill focus:outline-none focus:ring-2 focus:ring-brand-blue focus:border-transparent"
+                  placeholder="Search books"
+                  className="w-full px-4 py-2 pl-10 pr-4 text-sm border border-gray-very-light input-pill focus:outline-none focus:ring-2 focus:ring-brand-blue focus:border-transparent transition-all"
                 />
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <FiSearch className="h-5 w-5 text-gray-medium" style={{ strokeWidth: 1.5 }} />
-                      </div>
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <FiSearch className="h-4 w-4 text-gray-medium" style={{ strokeWidth: 1.5 }} />
+                </div>
               </div>
             </div>
 
             {/* Auth Buttons or User Avatar */}
             {isHomePage ? (
               <div className="flex items-center space-x-3">
-                <button className="btn-secondary text-sm">
+                <button className="btn-secondary text-sm px-5 py-2.5 rounded-lg hover:bg-gray-very-light transition-all">
                   Login
                 </button>
-                <button className="btn-primary text-sm">
+                <button className="btn-primary text-sm px-5 py-2.5 rounded-lg shadow-md hover:shadow-lg transition-all">
                   Register
                 </button>
               </div>
             ) : (
-              <div className="h-7 w-7 rounded-full overflow-hidden">
+              <div className="h-9 w-9 rounded-full overflow-hidden border-2 border-gray-very-light hover:border-brand-blue transition-colors cursor-pointer">
                 <img 
                   src={getAvatarSrc()}
                   alt="User avatar"
-                  width={28}
-                  height={28}
+                  width={36}
+                  height={36}
                   loading="eager"
                   decoding="async"
                   onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/user.svg'; }}
-                  className="w-full h-full object-contain p-0.5 rounded-full"
+                  className="w-full h-full object-cover rounded-full"
                 />
               </div>
             )}

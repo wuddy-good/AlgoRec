@@ -5,14 +5,13 @@ import { getUser } from '@/lib/userStorage';
 import { useRatings } from '@/lib/hooks/useRatings';
 import { useWatchlist } from '@/lib/hooks/useWatchlist';
 import { useProfile } from '@/lib/hooks/useProfile';
-import { FiStar, FiBook, FiFilm, FiTrash2 } from 'react-icons/fi';
+import { FiStar, FiTrash2 } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import NavigationArrows from '@/components/NavigationArrows';
 
 export default function ProfilePage() {
   const currentUser = getUser();
   const { user, refreshProfile } = useProfile(currentUser.id);
-  const [activeTab, setActiveTab] = useState<'book' | 'movie'>('movie');
   const [watchlistPage, setWatchlistPage] = useState<number>(0);
   const [ratingsPage, setRatingsPage] = useState<number>(0);
   
@@ -27,14 +26,11 @@ export default function ProfilePage() {
   // Використовуємо хук для отримання рейтингів
   const { ratings: allRatings, loading, error } = useRatings(currentUser.id);
 
-  // Фільтруємо рейтинги за активним табом
-  const filteredRatings = allRatings.filter(rating => rating.type === activeTab);
-
-  // Логіка для рейтингів - показуємо по 5 записів для поточного таба
+  // Логіка для рейтингів - показуємо по 5 записів
   const ratingsPerPage = 5;
-  const ratingsTotalPages = Math.ceil(filteredRatings.length / ratingsPerPage);
+  const ratingsTotalPages = Math.ceil(allRatings.length / ratingsPerPage);
   const ratingsStartIndex = ratingsPage * ratingsPerPage;
-  const displayedRatings = filteredRatings.slice(ratingsStartIndex, ratingsStartIndex + ratingsPerPage);
+  const displayedRatings = allRatings.slice(ratingsStartIndex, ratingsStartIndex + ratingsPerPage);
 
   // Функція видалення з watchlist (тепер з хука)
   const handleRemoveFromWatchlist = async (id: number) => {
@@ -134,38 +130,6 @@ export default function ProfilePage() {
           />
         </div>
 
-        {/* Tab Navigation */}
-        <div className="flex mb-4 bg-white-pure border border-gray-very-light rounded-lg overflow-hidden">
-          <button
-            onClick={() => {
-              setActiveTab('book');
-              setRatingsPage(0); // Скидаємо сторінку при зміні таба
-            }}
-            className={`flex items-center justify-center gap-2 px-4 py-2 transition-colors flex-1 font-sans text-[16px] ${
-              activeTab === 'book' 
-                ? 'bg-gray-lighter text-text-primary' 
-                : 'bg-white-pure text-text-primary'
-            }`}
-          >
-            <FiBook className="w-5 h-5" style={{ strokeWidth: 1.5 }} />
-            Books
-          </button>
-          <button
-            onClick={() => {
-              setActiveTab('movie');
-              setRatingsPage(0); // Скидаємо сторінку при зміні таба
-            }}
-            className={`flex items-center justify-center gap-2 px-4 py-2 transition-colors flex-1 font-sans text-[16px] ${
-              activeTab === 'movie' 
-                ? 'bg-gray-lighter text-text-primary' 
-                : 'bg-white-pure text-text-primary'
-            }`}
-          >
-            <FiFilm className="w-5 h-5" style={{ strokeWidth: 1.5 }} />
-            Films
-          </button>
-        </div>
-
         {/* Ratings Table */}
         <div className="bg-white-pure border border-gray-very-light rounded-lg overflow-hidden">
           <table className="w-full">
@@ -261,7 +225,7 @@ export default function ProfilePage() {
                       className="text-text-primary-light"
                       style={{ fontFamily: 'Open Sans, sans-serif', fontWeight: 400, fontSize: '16px' }}
                     >
-                      No {activeTab === 'book' ? 'books' : 'films'} rated yet.
+                      No books rated yet.
                     </p>
                   </td>
                 </tr>
@@ -314,10 +278,10 @@ export default function ProfilePage() {
                     className="inline-block text-white-pure px-2 py-1 rounded-full text-xs font-medium"
                     style={{ 
                       fontFamily: 'Open Sans, sans-serif', 
-                      backgroundColor: item.type === 'movie' ? '#001D4A' : '#026E89'
+                      backgroundColor: '#026E89'
                     }}
                   >
-                    {item.type === 'movie' ? 'Movie' : 'Book'}
+                    Book
                   </span>
                 </div>
 
