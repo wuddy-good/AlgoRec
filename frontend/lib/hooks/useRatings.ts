@@ -4,8 +4,8 @@ import { ratingsApi } from '@/lib/api';
 import { ratings as mockRatings } from '@/mocks/ratings';
 
 // Хук для роботи з рейтингами
-export const useRatings = (userId: number, type?: 'book' | 'movie') => {
-  const [ratings, setRatings] = useState<Rating[]>([]);
+export const useRatings = (userId: number) => {
+  const [ratings, setRatings] = useState<Rating[]>([] );
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -20,29 +20,23 @@ export const useRatings = (userId: number, type?: 'book' | 'movie') => {
         
         if (USE_API) {
           // Використовуємо API
-          const apiRatings = await ratingsApi.getUserRatings(userId, type);
+          const apiRatings = await ratingsApi.getUserRatings(userId);
           setRatings(apiRatings);
         } else {
           // Використовуємо моки
-          const filteredRatings = type 
-            ? mockRatings.filter(r => r.type === type)
-            : mockRatings;
-          setRatings(filteredRatings);
+          setRatings(mockRatings);
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch ratings');
         // Fallback до моків при помилці
-        const filteredRatings = type 
-          ? mockRatings.filter(r => r.type === type)
-          : mockRatings;
-        setRatings(filteredRatings);
+        setRatings(mockRatings);
       } finally {
         setLoading(false);
       }
     };
 
     fetchRatings();
-  }, [userId, type]);
+  }, [userId]);
 
   return { ratings, loading, error };
 };

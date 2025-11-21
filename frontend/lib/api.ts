@@ -57,9 +57,8 @@ const apiRequest = async <T = unknown>(endpoint: string, options: RequestInit = 
 // API методи для рейтингів
 export const ratingsApi = {
   // Отримати рейтинги користувача
-  getUserRatings: async (userId: number, type?: 'book' | 'movie'): Promise<Rating[]> => {
-    const params = type ? `?type=${type}` : '';
-    return apiRequest<Rating[]>(`/api/users/${userId}/ratings${params}`);
+  getUserRatings: async (userId: number): Promise<Rating[]> => {
+    return apiRequest<Rating[]>(`/api/users/${userId}/ratings`);
   },
 
   // Створити рейтинг
@@ -67,7 +66,6 @@ export const ratingsApi = {
     title: string;
     genre: string;
     rating: number;
-    type: 'book' | 'movie';
   }): Promise<Rating> => {
     return apiRequest<Rating>('/api/ratings', {
       method: 'POST',
@@ -80,7 +78,6 @@ export const ratingsApi = {
     title: string;
     genre: string;
     rating: number;
-    type: 'book' | 'movie';
   }>): Promise<Rating> => {
     return apiRequest<Rating>(`/api/ratings/${ratingId}`, {
       method: 'PUT',
