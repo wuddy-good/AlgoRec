@@ -33,7 +33,8 @@ export const useProfile = (userId: number) => {
             const profileData = JSON.parse(savedProfile);
             const updatedUser = {
               ...localUser,
-              name: profileData.name || localUser.name,
+              // Використовуємо name з profileData тільки якщо воно не порожнє
+              name: profileData.name || (localUser.name || ''),
               avatar: profileData.avatar || localUser.avatar
             };
             setUser(updatedUser);
@@ -131,7 +132,8 @@ export const useProfile = (userId: number) => {
       const profileData = JSON.parse(savedProfile);
       const updatedUser = {
         ...localUser,
-        name: profileData.name || localUser.name,
+        // Використовуємо name з profileData тільки якщо воно не порожнє
+        name: profileData.name || (localUser.name || ''),
         avatar: profileData.avatar || localUser.avatar
       };
       setUser(updatedUser);
