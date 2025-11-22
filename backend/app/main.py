@@ -1,60 +1,15 @@
-from contextlib import asynccontextmanager
 from fastapi import FastAPI, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy import func, desc
 
 from app import schemas
-from app.auth import hash_password, create_access_token, get_current_user
+from app.auth import hash_password, create_access_token, verify_password, get_current_user
 from app.models import User, Book, Rating, Watchlist
 from app.schemas import UserCreate, UserResponse, UserLogin
-from app.database import get_db, SessionLocal
-from app.recommender.service import RecommenderService
-
-from app.routers import recommendations
+from app.database import get_db
 
 
-# ===== LIFESPAN CONTEXT MANAGER =====
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    """
-    Lifespan event: ініціалізує RecommenderService один раз при старті.
-    Це дозволяє уникнути перезавантаження даних на кожен запит.
-    """
-    print("🚀 Запуск додатку: Ініціалізація RecommenderService...")
-    
-    # Створюємо сесію БД
-    db = SessionLocal()
-    
-    try:
-        # Ініціалізуємо рекомендаційний сервіс (це займає час!)
-        recommender = RecommenderService(db=db)
-        
-        # Зберігаємо сервіс у app.state для доступу в ендпоінтах
-        app.state.recommender = recommender
-        
-        print("✅ RecommenderService готовий до роботи!")
-        
-        # Yield передає керування FastAPI для обробки запитів
-        yield
-        
-    finally:
-        # Cleanup: закриваємо сесію БД після зупинки додатку
-        print("🛑 Зупинка додатку: Закриття ресурсів...")
-        db.close()
-
-
-# ===== FASTAPI APP =====
-app = FastAPI(
-    title="Movie Site API",
-    lifespan=lifespan  # ✅ Передаємо lifespan context manager
-)
-
-# ===== ПІДКЛЮЧЕННЯ РОУТЕРІВ =====
-app.include_router(
-    recommendations.router,
-    prefix="/api/v1/recommendations",
-    tags=["recommendations"]
-)
+app = FastAPI(title="Movie Site API")
 
 
 @app.get("/")
