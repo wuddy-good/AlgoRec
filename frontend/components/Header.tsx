@@ -1,16 +1,36 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { getUser } from '@/lib/userStorage';
 import { useProfile } from '@/lib/hooks/useProfile';
 import { FiSearch } from 'react-icons/fi';
+import LoginModal from './LoginModal';
+import RegisterModal from './RegisterModal';
 
 export default function Header() {
   const pathname = usePathname();
+  const router = useRouter();
   const isHomePage = pathname === '/';
   const currentUser = getUser();
   const { user } = useProfile(currentUser.id);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [isRegisterOpen, setIsRegisterOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  
+  // Перевіряємо чи користувач залогінений (чи є токен)
+  useEffect(() => {
+    const checkAuth = () => {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
+      setIsAuthenticated(token !== null);
+    };
+    
+    checkAuth();
+    // Перевіряємо кожні 500мс (для реакції на logout)
+    const interval = setInterval(checkAuth, 500);
+    return () => clearInterval(interval);
+  }, []);
   const getAvatarSrc = () => {
     const avatar = user?.avatar;
     if (typeof avatar === 'string') {
@@ -82,10 +102,16 @@ export default function Header() {
             {/* Auth Buttons or User Avatar */}
             {isHomePage ? (
               <div className="flex items-center space-x-3">
-                <button className="btn-secondary text-sm px-5 py-2.5 rounded-lg hover:bg-gray-very-light transition-all">
+                <button 
+                  onClick={() => setIsLoginOpen(true)}
+                  className="btn-secondary text-sm px-5 py-2.5 rounded-lg hover:bg-gray-very-light transition-all"
+                >
                   Login
                 </button>
-                <button className="btn-primary text-sm px-5 py-2.5 rounded-lg shadow-md hover:shadow-lg transition-all">
+                <button 
+                  onClick={() => setIsRegisterOpen(true)}
+                  className="btn-primary text-sm px-5 py-2.5 rounded-lg shadow-md hover:shadow-lg transition-all"
+                >
                   Register
                 </button>
               </div>
@@ -106,6 +132,24 @@ export default function Header() {
           </div>
         </div>
       </div>
+
+      {/* Modals */}
+      <LoginModal
+        isOpen={isLoginOpen}
+        onClose={() => setIsLoginOpen(false)}
+        onSwitchToRegister={() => {
+          setIsLoginOpen(false);
+          setIsRegisterOpen(true);
+        }}
+      />
+      <RegisterModal
+        isOpen={isRegisterOpen}
+        onClose={() => setIsRegisterOpen(false)}
+        onSwitchToLogin={() => {
+          setIsRegisterOpen(false);
+          setIsLoginOpen(true);
+        }}
+      />
     </header>
   );
 }

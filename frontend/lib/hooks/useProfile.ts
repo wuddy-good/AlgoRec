@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { User } from '@/types';
 import { userApi } from '@/lib/api';
-import { getUser } from '@/lib/userStorage';
+import { getUser, setUser as saveUserToStorage } from '@/lib/userStorage';
 
 // Хук для роботи з профілем користувача
 export const useProfile = (userId: number) => {
@@ -52,6 +52,29 @@ export const useProfile = (userId: number) => {
     };
 
     fetchProfile();
+    
+    // Слухаємо зміни в localStorage та кастомні події (для синхронізації між компонентами)
+    const handleStorageChange = () => {
+      fetchProfile();
+    };
+    
+    const handleProfileUpdate = (event: Event) => {
+      // Якщо є дані в event, використовуємо їх, інакше завантажуємо з localStorage
+      const customEvent = event as CustomEvent<User>;
+      if (customEvent.detail) {
+        setUser(customEvent.detail);
+      } else {
+        fetchProfile();
+      }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('userProfileUpdated', handleProfileUpdate);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('userProfileUpdated', handleProfileUpdate);
+    };
   }, [userId]);
 
   const updateProfile = async (data: { name: string; avatar?: string; email?: string }) => {
@@ -71,15 +94,24 @@ export const useProfile = (userId: number) => {
         const currentUser = getUser();
         const updatedUser = { ...currentUser, ...data };
         
-        // Зберігаємо в localStorage
-        localStorage.setItem('user', JSON.stringify(updatedUser));
+        // Зберігаємо в localStorage через правильну функцію (використовує ключ 'algoRec_user')
+        saveUserToStorage(updatedUser);
         localStorage.setItem('userProfile', JSON.stringify({
           ...data,
           updatedAt: new Date().toISOString()
         }));
         
-        // Оновлюємо стан
+        // Оновлюємо React state
         setUser(updatedUser);
+        
+        // Викликаємо кастомний event для синхронізації між компонентами
+        // Використовуємо setTimeout щоб переконатися що localStorage оновлено
+        if (typeof window !== 'undefined') {
+          setTimeout(() => {
+            window.dispatchEvent(new CustomEvent('userProfileUpdated', { detail: updatedUser }));
+          }, 0);
+        }
+        
         return updatedUser;
       }
     } catch (err) {
