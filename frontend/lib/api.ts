@@ -186,7 +186,7 @@ export const authApi = {
     email: string;
     password: string;
     confirm_password: string;
-    location: string;
+    location?: string;
   }): Promise<{ user: User; token: string }> => {
     await apiRequest('/api/register', {
       method: 'POST',
@@ -194,7 +194,7 @@ export const authApi = {
         email: userData.email,
         password: userData.password,
         confirm_password: userData.confirm_password,
-        location: userData.location,
+        ...(userData.location && { location: userData.location }),
       }),
     });
 

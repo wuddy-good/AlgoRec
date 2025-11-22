@@ -101,7 +101,7 @@ export default function ProfilePage() {
             <h2
               className="text-text-primary font-sans font-semibold text-[30px] mb-[2px]"
             >
-              Welcome, {user?.name || currentUser.name}
+              Welcome, {user?.name || 'User'}
             </h2>
             <p
               className="text-text-primary-light font-sans text-[16px]"
