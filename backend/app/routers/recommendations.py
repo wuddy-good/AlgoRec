@@ -2,33 +2,31 @@
 Роутер для ендпоінтів рекомендацій
 """
 
-from fastapi import APIRouter, Depends, HTTPException, status, Header
+from fastapi import APIRouter, Depends, HTTPException, status, Header, Request
 from sqlalchemy.orm import Session
 from jose import JWTError, jwt
 from typing import Optional
 
-from backend.app.database import get_db
-from backend.app.models import User
-from backend.app.schemas import RecommendationResponse, RecommendedItem
-from backend.app.recommender.service import RecommenderService
-from backend.app.auth import SECRET_KEY, ALGORITHM
+from app.database import get_db
+from app.models import User
+from app.schemas import RecommendationResponse, RecommendedItem
+from app.recommender.service import RecommenderService
+from app.auth import SECRET_KEY, ALGORITHM
 
 router = APIRouter()
 
 # === Dependency Injection ===
 
-def get_recommender_service(db: Session = Depends(get_db)) -> RecommenderService:
+def get_recommender_service(request: Request) -> RecommenderService:
     """
-    Провайдер RecommenderService.
+    Провайдер RecommenderService з app.state.
     
-    ВАЖЛИВО: RecommenderService — це "важкий" об'єкт, який завантажує всі дані
-    та будує матриці подібності при створенні. Тому ми створюємо його один раз
-    при старті FastAPI додатку і використовуємо як singleton.
+    ✅ ОПТИМІЗОВАНО: Тепер сервіс ініціалізується один раз при старті додатку
+    через lifespan context manager у main.py. Ми просто витягуємо його з app.state.
     
-    Але для простоти у цьому прикладі створюємо новий інстанс на кожен запит.
-    У production варто використовувати @lru_cache або app.state для кешування.
+    Це дозволяє уникнути перезавантаження даних на кожен запит.
     """
-    return RecommenderService(db=db)
+    return request.app.state.recommender
 
 
 def get_current_user(

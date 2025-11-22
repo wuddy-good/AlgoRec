@@ -1,6 +1,7 @@
 """
 Модуль service.py - Сервіс рекомендацій
 Інкапсулює всю логіку content-based та collaborative filtering
+АДАПТОВАНО: стійкість до порожніх genres та synthetic description
 """
 
 import pandas as pd
@@ -14,7 +15,7 @@ from sklearn.neighbors import NearestNeighbors
 from sqlalchemy.orm import Session
 import logging
 
-from backend.app.recommender.data_service import load_items_df, load_ratings_df, load_users_df
+from app.recommender.data_service import load_items_df, load_ratings_df, load_users_df
 
 logger = logging.getLogger(__name__)
 
@@ -89,7 +90,7 @@ class RecommenderService:
         self.items_df = pd.merge(self.items_df, avg_ratings, on='item_id', how='left')
         
         # Заповнення NaN середнім рейтингом по всьому датасету
-        self.global_avg_rating = self.ratings_df['rating'].mean()
+        self.global_avg_rating = self.ratings_df['rating'].mean() if len(self.ratings_df) > 0 else 3.0
         self.items_df['avg_rating'] = self.items_df['avg_rating'].fillna(self.global_avg_rating)
         
         # Метадані для нормалізації
@@ -111,32 +112,54 @@ class RecommenderService:
     def _build_content_vectors(self):
         """
         Будує контент-вектори для елементів.
-        (Логіка з content_vectorizer.py)
+        АДАПТОВАНО: стійкість до порожніх genres та використання synthetic description.
         """
         logger.info("Побудова контент-векторів...")
+
+        if self.items_df.empty:
+            logger.warning("items_df порожній. Побудова контент-векторів пропущена.")
+            self.content_vectors = csr_matrix((0, 0))
+            return
         
-        # 1. TF-IDF для description
+        # 1. TF-IDF для description (тепер це synthetic description з title + author + publisher)
         descriptions = self.items_df['description'].fillna('')
         self.tfidf = TfidfVectorizer(max_features=5000, stop_words='english')
         tfidf_matrix = self.tfidf.fit_transform(descriptions)
         
-        # 2. Multi-hot для genres
+        # 2. Multi-hot для genres (може бути порожнім!)
         def split_and_clean(series):
             return series.fillna('').apply(lambda x: [s.strip() for s in x.split(';') if s.strip()])
         
         genres_list = split_and_clean(self.items_df['genres'])
-        self.mlb_genres = MultiLabelBinarizer(sparse_output=True)
-        genres_matrix = self.mlb_genres.fit_transform(genres_list)
         
-        # 3. Multi-hot для actors
+        # Перевірка: якщо жодного жанру немає, створюємо порожню матрицю
+        all_genres_empty = all(len(g) == 0 for g in genres_list)
+        if all_genres_empty:
+            logger.warning("Жанри відсутні у всіх записах, пропускаємо genres_matrix")
+            genres_matrix = csr_matrix((len(self.items_df), 0))
+        else:
+            self.mlb_genres = MultiLabelBinarizer(sparse_output=True)
+            genres_matrix = self.mlb_genres.fit_transform(genres_list)
+        
+        # 3. Multi-hot для actors (порожнє для книг)
         actors_list = split_and_clean(self.items_df['actors'])
-        self.mlb_actors = MultiLabelBinarizer(sparse_output=True)
-        actors_matrix = self.mlb_actors.fit_transform(actors_list)
+        all_actors_empty = all(len(a) == 0 for a in actors_list)
+        if all_actors_empty:
+            logger.warning("Актори відсутні у всіх записах, пропускаємо actors_matrix")
+            actors_matrix = csr_matrix((len(self.items_df), 0))
+        else:
+            self.mlb_actors = MultiLabelBinarizer(sparse_output=True)
+            actors_matrix = self.mlb_actors.fit_transform(actors_list)
         
         # 4. Multi-hot для author_director
-        author_director_list = self.items_df['author_director'].fillna('').apply(lambda x: [x.strip()])
-        self.mlb_author = MultiLabelBinarizer(sparse_output=True)
-        author_matrix = self.mlb_author.fit_transform(author_director_list)
+        author_director_list = self.items_df['author_director'].fillna('').apply(lambda x: [x.strip()] if x.strip() else [])
+        all_authors_empty = all(len(a) == 0 for a in author_director_list)
+        if all_authors_empty:
+            logger.warning("Автори відсутні, пропускаємо author_matrix")
+            author_matrix = csr_matrix((len(self.items_df), 0))
+        else:
+            self.mlb_author = MultiLabelBinarizer(sparse_output=True)
+            author_matrix = self.mlb_author.fit_transform(author_director_list)
         
         # 5. Нормалізація числових ознак
         scaler = MinMaxScaler()
@@ -161,15 +184,19 @@ class RecommenderService:
             rating_scaled = scaler.transform(rating_data)
         rating_sparse = csr_matrix(rating_scaled)
         
-        # 6. Об'єднання всіх ознак
-        self.content_vectors = hstack([
-            tfidf_matrix,
-            genres_matrix,
-            actors_matrix,
-            author_matrix,
-            year_sparse,
-            rating_sparse
-        ]).tocsr()
+        # 6. Об'єднання всіх ознак (пропускаємо порожні матриці)
+        matrices_to_stack = [tfidf_matrix]
+        
+        if genres_matrix.shape[1] > 0:
+            matrices_to_stack.append(genres_matrix)
+        if actors_matrix.shape[1] > 0:
+            matrices_to_stack.append(actors_matrix)
+        if author_matrix.shape[1] > 0:
+            matrices_to_stack.append(author_matrix)
+        
+        matrices_to_stack.extend([year_sparse, rating_sparse])
+        
+        self.content_vectors = hstack(matrices_to_stack).tocsr()
         
         # 7. L2 нормалізація
         normalizer = Normalizer(norm='l2')
@@ -183,6 +210,11 @@ class RecommenderService:
         (Логіка з collaborative.py)
         """
         logger.info("Обчислення item-item CF подібності...")
+        
+        if self.ratings_df.empty:
+            logger.warning("Ratings DataFrame порожній, CF подібність не може бути обчислена")
+            self.cf_similarity_map = {}
+            return
         
         # Створення item-user матриці
         R = self.ratings_df.pivot_table(index='item_id', columns='user_id', values='rating')
