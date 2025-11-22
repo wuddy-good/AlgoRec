@@ -165,7 +165,7 @@ export const authApi = {
     const normalizedUser: User = {
       id: response.user.id,
       email: response.user.email,
-      name: response.user.email.split('@')[0],
+      name: '', // Ім'я порожнє за замовчуванням, користувач може додати його в профілі
       avatar: '',
       location: response.user.location || '',
     };
@@ -173,6 +173,8 @@ export const authApi = {
     if (typeof window !== 'undefined') {
       localStorage.setItem('auth_token', response.access_token);
       setUser(normalizedUser);
+      // Очищаємо старий userProfile, щоб не використовувалися старі дані
+      localStorage.removeItem('userProfile');
     }
 
     return {

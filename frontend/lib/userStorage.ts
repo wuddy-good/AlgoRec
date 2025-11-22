@@ -4,9 +4,9 @@ const USER_STORAGE_KEY = 'algoRec_user';
 
 const defaultUser: User = {
   id: 1,
-  name: "Jacob Jones",
-  avatar: "/avatars/jacob.jpg",
-  email: "jacob@example.com",
+  name: "", // Порожнє ім'я за замовчуванням
+  avatar: "",
+  email: "",
   location: ''
 };
 
