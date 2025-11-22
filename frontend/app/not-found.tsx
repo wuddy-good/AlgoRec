@@ -5,7 +5,7 @@ import Image from 'next/image';
 
 export default function NotFound() {
   return (
-    <div className="px-4 py-8">
+    <div className="px-4 py-16 min-h-[60vh] flex items-center justify-center">
       <div className="text-center max-w-2xl mx-auto">
         {/* 404 with Robot */}
         <div className="mb-4">
@@ -15,8 +15,8 @@ export default function NotFound() {
               <Image
                 src="/404.png"
                 alt="Confused Robot"
-                width={100}
-                height={100}
+                width={180}
+                height={180}
                 className="animate-bounce"
               />
             </div>
