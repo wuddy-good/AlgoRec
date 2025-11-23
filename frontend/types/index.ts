@@ -23,25 +23,17 @@ export interface WatchlistItem {
 
 export interface Book {
   id: number;
+  isbn: string;
   title: string;
   author: string;
-  genre: string;
   year: number;
-  rating: number;
-  description: string;
-  imageUrl: string;
-}
-
-export interface Movie {
-  id: number;
-  title: string;
-  director: string;
-  genre: string;
-  year: number;
-  rating: number;
-  description: string;
-  imageUrl: string;
+  publisher: string;
+  image_url_s: string;
+  image_url_m: string;
+  image_url_l: string;
+  avg_rating: number;
+  rating_count: number;
 }
 
 export type ContentType = 'book';
-export type ContentItem = Book | Movie;
+export type ContentItem = Book

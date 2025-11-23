@@ -7,10 +7,22 @@ from app.auth import hash_password, create_access_token, verify_password, get_cu
 from app.models import User, Book, Rating, Watchlist
 from app.schemas import UserCreate, UserResponse, UserLogin
 from app.database import get_db
+from fastapi.middleware.cors import CORSMiddleware
 
 
 app = FastAPI(title="Movie Site API")
 
+origins = [
+    "http://localhost:3000", 
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins, 
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 def root():
